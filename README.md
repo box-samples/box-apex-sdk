@@ -1,5 +1,3 @@
-# box-apex-sdk
-
 Box Apex SDK
 ============
 
