@@ -6,6 +6,8 @@ public class BoxApiRequest {
     
     private static final Integer MAX_REDIRECTS = 3;
     private static final Integer DEFAULT_CALLOUT_TIMEOUT = 20000;
+    private static final Integer MAX_CALLOUT_FILE_SIZE = 6000000;
+    private static final String BOUNDARY = 'BoxApexSDKcjhJ$vXxPaCKo=83up1oadb0undary';
     
     public final BoxApiConnection api;
     public final list<RequestHeader> headers;
@@ -15,6 +17,7 @@ public class BoxApiRequest {
     public Integer maxRequestAttempts {get; set;}
     public Integer timeout {get; set;}
     public String body {get; set;}
+    public Blob bodyAsBlob {get; set;}
     public long bodyLength {get; set;}
     private Integer numberOfRedirects {get; set;}
     private Integer numberOfRetries {get; set;}
@@ -52,6 +55,19 @@ public class BoxApiRequest {
     	this.timeout = timeout;
     }
     
+    public void setMultipartFormBody(Blob fileBody, String fileName) {
+    	if (fileBody.size() > MAX_CALLOUT_FILE_SIZE) {
+    		throw new BoxApiRequestException('File size is too large (' + String.valueOf(fileBody.size()) + ' bytes). The maximum file size is ' + String.valueOf(MAX_CALLOUT_FILE_SIZE) + ' bytes.');
+    	}
+    	try {
+    		Blob bodyBlob = BoxBase64.buildMultipartFileBody(fileBody, fileName, BOUNDARY);
+    		this.bodyAsBlob = bodyBlob;
+		    this.addHeader('Content-Type', 'multipart/form-data; boundary=' + BOUNDARY);
+    	} catch (Exception ex) {
+			throw new BoxApiRequestException('Exception thrown when Base64 Decoding the http request body. ' + ex.getMessage());
+		}
+    }
+    
     public HttpResponse send() {
     	this.numberOfRetries = 0;
     	this.numberOfRedirects = 0;
@@ -72,7 +88,7 @@ public class BoxApiRequest {
     		} catch (BoxApiRequestException bex) {
     			throw bex;
 			} catch (Exception ex) {
-    			throw new BoxApiRequestException('An unexpected error occurred when trying to make a callout to the Box API. ' + ex);
+    			throw new BoxApiRequestException('An unexpected error occurred when trying to make a callout to the Box API. ' + ex.getMessage());
     		}
     	}
     	
@@ -87,17 +103,21 @@ public class BoxApiRequest {
     	request.setMethod(this.method);
     	request.setEndpoint(this.url);
     	request.setTimeout(this.timeout);
-    	for (RequestHeader header : this.headers) {
-    		request.setHeader(header.getKey(), header.getValue());
-    	}
     	if (this.api != null) {
 	    	if (this.shouldAuthenticate) {
 	    		request.setHeader('Authorization', 'Bearer ' + this.api.getAccessToken());
 	    	}
 	    	request.setHeader('User-Agent', this.api.getUserAgent());
     	}
-    	if (this.body != null)
+    	if (this.bodyAsBlob != null) {
+    		request.setBodyAsBlob(this.bodyAsBlob);
+    		this.addHeader('Content-Length', String.valueof(request.getBodyAsBlob().size()));
+    	} else if (this.body != null) {
     	    request.setBody(this.body);
+    	}
+    	for (RequestHeader header : this.headers) {
+    		request.setHeader(header.getKey(), header.getValue());
+    	}
     	System.debug('httprequest = ' + request);
     	System.debug('request body = ' + request.getBody());
     	HttpResponse response = h.send(request);
@@ -124,7 +144,7 @@ public class BoxApiRequest {
     	try {
     		redirect = response.getHeader('Location');
     	} catch (Exception ex) {
-    		throw new BoxApiRequestException('Exception occurred when getting redirect Location. ' + ex);
+    		throw new BoxApiRequestException('Exception occurred when getting redirect Location. ' + ex.getMessage());
     	}
     	
     	if (redirect != null) {

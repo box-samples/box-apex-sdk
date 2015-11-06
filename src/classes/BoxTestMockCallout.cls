@@ -27,19 +27,22 @@ public class BoxTestMockCallout implements HttpCalloutMock
         }
         return null;
     }
-    
+
     private HttpResponse buildHttpResponse(String body, String status, Integer statusCode) {
-    	HttpResponse response = new HttpResponse();
-    	if (body != null) 
-    		response.setBody(body);
-    	if (status != null) 
-    	    response.setStatus(status);
-    	if (statusCode != null) {
-    		response.setStatusCode(statusCode);
-    		if (statusCode == 301 || statusCode == 302)
-    			response.setHeader('Location', 'http://redirect.com');
-    	}
-    	return response;
+        HttpResponse response = new HttpResponse();
+        if (body != null) {
+            response.setBody(body);
+        }
+        if (status != null) {
+            response.setStatus(status);
+        }
+        if (statusCode != null) {
+            response.setStatusCode(statusCode);
+            if (statusCode == 301 || statusCode == 302) {
+                response.setHeader('Location', 'http://redirect.com');
+            }
+        }
+        return response;
     }
 
     public class MockResponse {

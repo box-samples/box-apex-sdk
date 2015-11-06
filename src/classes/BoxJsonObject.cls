@@ -4,6 +4,7 @@
  * The most common implementation of BoxJsonObject is BoxResource.Info and its subclasses.
  */
 public abstract class BoxJsonObject {
+
     /** A set of valid JSONToken values */
     private static final set<JSONToken> VALID_TOKEN_VALUES = new set<JSONToken> 
         {
@@ -14,36 +15,36 @@ public abstract class BoxJsonObject {
             JSONToken.VALUE_NUMBER_INT, 
             JSONToken.VALUE_STRING
         };
-	
-	/** A set of token names that are always Integers */
+
+    /** A set of token names that are always Integers */
     private static final set<String> INTEGER_TOKEN_NAMES = new set<String>
         {
-        	'total_count',
-        	'size',
-        	'download_count',
-        	'preview_count',
-        	'offset',
-        	'limit',
-        	'space_amount',
-        	'space_used',
-        	'max_upload_size',
-        	'expires_in',
-        	'exp'
+            'total_count',
+            'size',
+            'download_count',
+            'preview_count',
+            'offset',
+            'limit',
+            'space_amount',
+            'space_used',
+            'max_upload_size',
+            'expires_in',
+            'exp'
         };
-    
+
     /** A set of token values that indicate a boolean value */
     private static final set<String> BOOLEAN_TOKEN_VALUES = new set<String> 
         {
-        	'true',
-        	'false'
+            'true',
+            'false'
         };
-	
+
     /** The raw json string associated with this BoxJsonObject */
     protected String jsonString;
-    
+
     /** A map of the child objects of this BoxJsonObject */
     public map<String, String> children {get; protected set;}
-    
+
     /** A flag to indicate whether the json string representation of this object needs to be re-created */
     protected Boolean rebuildJsonString;
 
@@ -84,7 +85,7 @@ public abstract class BoxJsonObject {
     public String getValue(String key) {
         return this.children.get(key);
     }
-    
+
     /**
      * Adds a value to the children map
      * @param String key The key to be added to the map.
@@ -96,7 +97,7 @@ public abstract class BoxJsonObject {
             this.rebuildJsonString = true;
         }
     }
-    
+
     /**
      * Adds a value to the children map from an existing BoxJsonObject (adding a folder to the "parent", for example)
      * @param String key The key to be added to the map.
@@ -105,17 +106,17 @@ public abstract class BoxJsonObject {
     public virtual void addValue(String key, BoxJsonObject value) {
         addValue(key, value.getJsonString());
     }
-    
+
     /**
      * Updates and returns the raw json string for this BoxJsonObject
      */
     public String getJsonString() {
         if (rebuildJsonString) {
-        	updateJsonString();
+            updateJsonString();
         }
         return this.jsonString;
     }
-    
+
     /**
      * Recreates the raw json string for this BoxJsonObject based on the children that are present in the children map
      */
@@ -125,7 +126,7 @@ public abstract class BoxJsonObject {
             String value = this.children.get(key);
             jsonStringValue += '"' + key + '":';
             if (value == null) {
-            	jsonStringValue += 'null,';
+                jsonStringValue += 'null,';
             } else if (value.startsWith('{') || value.startsWith('[') ||
                          INTEGER_TOKEN_NAMES.contains(key) || BOOLEAN_TOKEN_VALUES.contains(value)) {
                 jsonStringValue += value + ',';
@@ -163,22 +164,22 @@ public abstract class BoxJsonObject {
         String currentTokenName;
         String currentTokenValue;
         JSONToken currentToken;
-        
+
         parser.nextToken();
         currentToken = parser.getCurrentToken();
         if (currentToken != JSONToken.START_OBJECT) {
             throw new BoxJsonObjectException('Json passed to BoxJsonObject.parse must start with JSONToken.START_OBJECT');
         }
-        
+
         while (parser.nextToken() != null) {
             currentToken = parser.getCurrentToken();
             if (currentToken == JSONToken.FIELD_NAME) {
                 currentTokenName = parser.getCurrentName();
             } else if (VALID_TOKEN_VALUES.contains(currentToken)) {
                 currentTokenValue = parser.getText();
-                if (currentToken == JSONToken.VALUE_NULL) 
-                	currentTokenValue = null;
-                
+                if (currentToken == JSONToken.VALUE_NULL) {
+                    currentTokenValue = null;
+                }
                 this.children.put(currentTokenName, currentTokenValue);
             } else if (currentToken == JSONToken.START_OBJECT) {
                 String prepend = parser.getText();
@@ -230,12 +231,12 @@ public abstract class BoxJsonObject {
                     value = BoxJsonObject.removeCommaAndAddToken(value, currentValue);
                     arraysDeep--;
                 } else if (currentToken == JSONToken.VALUE_NULL) {
-                	value += 'null,';
+                    value += 'null,';
                 } else {
                     if (currentToken == JSONToken.FIELD_NAME) {
-                    	if (value.endsWith('}')) {
-                    		value += ',';
-                    	}
+                        if (value.endsWith('}')) {
+                            value += ',';
+                        }
                         value += '"' + parser.getText() + '"' + ' : ';
                     } else {
                         value += '"' + parser.getText() + '",';
@@ -260,106 +261,49 @@ public abstract class BoxJsonObject {
             return value + currentValue;
         }
     }
-    
+
     public static list<String> parseJsonStringArray(String jsonStringArray) {
-    	list<String> strings = new list<String>();
-    	JsonParser parser;
-    	try {
-    		parser = JSON.createParser(jsonStringArray);
-    	} catch (Exception e) {
-    		throw new BoxJsonObjectException('Json string passed to BoxJsonObject.parseJsonStringArray was not valid json.');
-    	}
-    	
-    	parser.nextToken();
-    	if (parser.getCurrentToken() == JSONToken.START_ARRAY) {
-    		while (parser.nextToken() != null) {
-    			if (parser.getCurrentToken() == JSONToken.VALUE_STRING) {
-    				strings.add(parser.getText());
-    			}
-    		}
-    	} else {
-    		throw new BoxJsonObjectException('Json passed to BoxJsonObject.parseJsonStringArray must start with JSONToken.START_ARRAY');
-    	}
-    	return strings;
+        list<String> strings = new list<String>();
+        JsonParser parser;
+        try {
+            parser = JSON.createParser(jsonStringArray);
+        } catch (Exception e) {
+            throw new BoxJsonObjectException('Json string passed to BoxJsonObject.parseJsonStringArray was not valid json.');
+        }
+
+        parser.nextToken();
+        if (parser.getCurrentToken() == JSONToken.START_ARRAY) {
+            while (parser.nextToken() != null) {
+                if (parser.getCurrentToken() == JSONToken.VALUE_STRING) {
+                    strings.add(parser.getText());
+                }
+            }
+        } else {
+            throw new BoxJsonObjectException('Json passed to BoxJsonObject.parseJsonStringArray must start with JSONToken.START_ARRAY');
+        }
+        return strings;
     }
-    
+
     public static list<String> parseJsonObjectArray(String jsonString) {
-    	list<String> strings = new list<String>();
-    	JsonParser parser;
-    	try {
-    		parser = JSON.createParser(jsonString);
-    	} catch (Exception e) {
-    		throw new BoxJsonObjectException('Json string passed to BoxJsonObject.parseJsonObjectArray was not valid json.');
-    	}
-    	
-    	parser.nextToken();
-    	if (parser.getCurrentToken() == JSONToken.START_ARRAY) {
-    		while (parser.nextToken() != null) {
-    			if (parser.getCurrentToken() == JSONToken.START_OBJECT) {
-    				strings.add(parser.getText() + BoxJsonObject.getStringUntilTokenValue(parser, JSONToken.END_OBJECT));
-    			}
-    		}
-    	} else {
-    		throw new BoxJsonObjectException('Json passed to BoxJsonObject.parseJsonObjectArray must start with JSONToken.START_ARRAY');
-    	}
-    	return strings;
-    }
+        list<String> strings = new list<String>();
+        JsonParser parser;
+        try {
+            parser = JSON.createParser(jsonString);
+        } catch (Exception e) {
+            throw new BoxJsonObjectException('Json string passed to BoxJsonObject.parseJsonObjectArray was not valid json.');
+        }
 
-    public static list<String> parseJsonStringArrayWithKey(String jsonStringArray, String key) {
-    	list<String> strings = new list<String>();
-    	JsonParser parser;
-    	try {
-    		parser = JSON.createParser(jsonStringArray);
-    	} catch (Exception e) {
-    		throw new BoxJsonObjectException('Json string passed to BoxJsonObject.parseJsonStringArray was not valid json.');
-    	}
-    	 while (parser.nextToken() != null) {
-            if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) &&
-                (parser.getText() == key)) {
-                	break;
+        parser.nextToken();
+        if (parser.getCurrentToken() == JSONToken.START_ARRAY) {
+            while (parser.nextToken() != null) {
+                if (parser.getCurrentToken() == JSONToken.START_OBJECT) {
+                    strings.add(parser.getText() + BoxJsonObject.getStringUntilTokenValue(parser, JSONToken.END_OBJECT));
                 }
-         }
-    	// ToDo For some reason after doing parser.nextToken() the next token is not start_array. Check how to debug
-    	parser.nextToken();
-    	if (parser.getCurrentToken() == JSONToken.START_ARRAY) {
-    		while (parser.nextToken() != null) {
-    			if (parser.getCurrentToken() == JSONToken.VALUE_STRING) {
-    				strings.add(parser.getText());
-    			}
-    		}
-    	} else {
-    		throw new BoxJsonObjectException('Json passed to BoxJsonObject.parseJsonStringArray must start with JSONToken.START_ARRAY');
-    	}
-    	return strings;
-    }
-
- 	public static String parseJsonStringWithKey(String jsonString, String key) {
-    	String value;
-    	JsonParser parser;
-    	try {
-    		parser = JSON.createParser(jsonString);
-    	} catch (Exception e) {
-    		throw new BoxJsonObjectException('Json string passed to BoxJsonObject.parseJsonStringArray was not valid json.');
-    	}
-    	
-    	 while (parser.nextToken() != null) {
-            if ((parser.getCurrentToken() == JSONToken.FIELD_NAME) &&
-                (parser.getText() == key)) {
-                	break;
-                }
-         }
-    	
-    	parser.nextToken();
-    	if (parser.getCurrentToken() == JSONToken.START_OBJECT) {
-    		if (parser.nextToken() != null) {
-    			if (parser.getCurrentToken() == JSONToken.VALUE_STRING) {
-    				value = parser.getText();
-    			}
-    		}
-    	} else {
-    		throw new BoxJsonObjectException('Json passed to BoxJsonObject.parseJsonStringArray must start with JSONToken.START_ARRAY');
-    	}
-    	return value;
+            }
+        } else {
+            throw new BoxJsonObjectException('Json passed to BoxJsonObject.parseJsonObjectArray must start with JSONToken.START_ARRAY');
+        }
+        return strings;
     }
 
     public class BoxJsonObjectException extends Exception {}

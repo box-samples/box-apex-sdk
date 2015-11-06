@@ -158,4 +158,51 @@ public class BoxFolderTests {
     	
     	System.assertEquals('791293', newCollab.id);
     }
+    
+    public static testmethod void testParseMember() {
+        BoxApiConnection api = new BoxApiConnection('accesstoken');
+		BoxFolder folder = new BoxFolder(api,'10543463');
+		BoxFolder.Info folderInfo = new BoxFolder.Info();
+		 
+		Test.startTest();
+		folderInfo.parseMember('has_collaborations', 'true');
+		folderInfo.parseMember('sync_state', 'synced');		
+		folderInfo.parseMember('permissions', 'can_download');
+		folderInfo.parseMember('can_non_owners_invite', 'false');		
+        Test.stopTest();
+
+		System.assertEquals(true, folderInfo.hasCollaborations);
+		System.assertEquals(BoxFolder.SyncState.SYNCED, folderInfo.syncState);
+		System.assertEquals(BoxFolder.Permission.CAN_DOWNLOAD, folderInfo.permissions);
+		System.assertEquals(false, folderInfo.canNonOwnersInvite);
+		
+     }
+     
+     public static testmethod void testParseSyncState() {
+   		System.assertEquals(BoxFolder.SyncState.SYNCED, BoxFolder.parseSyncState('synced'));
+    	System.assertEquals(BoxFolder.SyncState.NOT_SYNCED, BoxFolder.parseSyncState('not_synced'));
+    	System.assertEquals(BoxFolder.SyncState.PARTIALLY_SYNCED, BoxFolder.parseSyncState('partially_synced'));
+   	 }
+   	 
+   	 public static testmethod void testParsePermissions() {
+   		System.assertEquals(BoxFolder.Permission.CAN_DOWNLOAD, BoxFolder.parsePermission('can_download'));
+   		System.assertEquals(BoxFolder.Permission.CAN_UPLOAD, BoxFolder.parsePermission('can_upload'));
+   		System.assertEquals(BoxFolder.Permission.CAN_RENAME, BoxFolder.parsePermission('can_rename'));
+   		System.assertEquals(BoxFolder.Permission.CAN_DELETE, BoxFolder.parsePermission('can_delete'));
+   		System.assertEquals(BoxFolder.Permission.CAN_SHARE, BoxFolder.parsePermission('can_share'));
+   		System.assertEquals(BoxFolder.Permission.CAN_INVITE_COLLABORATOR, BoxFolder.parsePermission('can_invite_collaborator'));
+   		System.assertEquals(BoxFolder.Permission.CAN_SET_SHARE_ACCESS, BoxFolder.parsePermission('can_set_share_access'));  	
+   	 }
+   	 
+   	 public static testmethod void testGetPermissionAsString() {
+   	  	System.assertEquals(BoxFolder.getPermissionAsString(BoxFolder.Permission.CAN_DOWNLOAD), 'can_download');
+   		System.assertEquals(BoxFolder.getPermissionAsString(BoxFolder.Permission.CAN_UPLOAD), 'can_upload');
+   		System.assertEquals(BoxFolder.getPermissionAsString(BoxFolder.Permission.CAN_RENAME), 'can_rename');
+   		System.assertEquals(BoxFolder.getPermissionAsString(BoxFolder.Permission.CAN_DELETE), 'can_delete');
+   		System.assertEquals(BoxFolder.getPermissionAsString(BoxFolder.Permission.CAN_SHARE), 'can_share');
+   		System.assertEquals(BoxFolder.getPermissionAsString(BoxFolder.Permission.CAN_INVITE_COLLABORATOR), 'can_invite_collaborator');
+   		System.assertEquals(BoxFolder.getPermissionAsString(BoxFolder.Permission.CAN_SET_SHARE_ACCESS), 'can_set_share_access');  	
+   	
+   	 }
+   	 
 }

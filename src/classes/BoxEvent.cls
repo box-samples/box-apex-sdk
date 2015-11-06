@@ -1,229 +1,253 @@
+/**
+ * Represents an event that was fired off by the Box events API.
+ */
+
 public class BoxEvent extends BoxResource {
-	
+
+    /**
+     * Constructs a BoxEvent with a given ID.
+     *
+     * @param  api the API connection to be used by the event.
+     * @param  id  the ID of the event.
+     */
     public BoxEvent(BoxApiConnection api, String id) {
         super(api, id);
     }
-    
+
     public override String getObjectType() {
         return 'event';
     }
-    
+
     public override void setInfo(BoxJsonObject jsonObject) {
         this.information = (BoxEvent.Info) jsonObject;
     }
- 
+
+    /**
+     * Contains information about a BoxEvent.
+     */
     public class Info extends BoxResource.Info {
-   
-   		public BoxResource.Info sourceInfo;
-    	public BoxEvent.Type eventType;
-    	public BoxJsonObject sourceJSON;
-    	public DateTime createdAt;
-    	public String ipAddress;
-    	public BoxJsonObject additionalDetails;
-    	public BoxCollaborator.Info accessibleBy;
-    	public BoxUser.Info createdBy;
-    	public String sessionID;
-	 	
-	 	public Info() {
+
+        public BoxResource.Info sourceInfo;
+        public BoxEvent.Type eventType;
+        public BoxJsonObject sourceJSON;
+        public DateTime createdAt;
+        public String ipAddress;
+        public BoxJsonObject additionalDetails;
+        public BoxCollaborator.Info accessibleBy;
+        public BoxUser.Info createdBy;
+        public String sessionID;
+
+        /**
+         * Constructs an empty Info object.
+         */
+         public Info() {
             super();
         }
-        
+
+        /**
+         * Constructs an Info object by parsing information from a JSON string.
+         *
+         * @param  json the JSON string to parse.
+         */
         public Info(String jsonString) {
             super(jsonString);
             for (String key : this.children.keySet()) {
-           		this.parseMember(key, this.children.get(key));
+                   this.parseMember(key, this.children.get(key));
             }
         }
-        
+
+        /**
+         * Constructs an Info object using an already parsed JSON object.
+         *
+         * @param  jsonObject the parsed JSON object.
+         */
         public Info(BoxJsonObject jsonObject) {
             super(jsonObject);
             for (String key : this.children.keySet()) {
-            	this.parseMember(key, this.children.get(key));
+                this.parseMember(key, this.children.get(key));
             }
         }
-        
+
         public override void addValue(String key, String value) {
-        	super.addValue(key, value);
-        	if (key != null) {
-        		this.parseMember(key, value);
-        		this.rebuildJsonString = true;
-        	}
+            super.addValue(key, value);
+            if (key != null) {
+                this.parseMember(key, value);
+                this.rebuildJsonString = true;
+            }
         }
-        
+
         public override void addValue(String key, BoxJsonObject value) {
-        	this.addValue(key, value.getJsonString());
+            this.addValue(key, value.getJsonString());
         }
-   
-   		@testvisible
-		private void parseMember(String key, String value) {
-        		if (key != null) {
-            	    if (key == 'source_info') {
-               			this.sourceInfo = BoxResource.parseBoxResource(value);                		                	
-                	} else if (key == 'event_type') {
-            	        this.eventType = this.parseEventType(value);
-                	} else if (key == 'source_json') {
-                		this.sourceJSON = new BoxGenericJsonObject(value);
-           	        } else if (key == 'created_at') {
-                    	this.createdAt = BoxDateFormat.parseBoxDateTimeString(value);
-                	} else if (key == 'ip_address') {
-                		this.ipAddress = value;
-                	} else if (key == 'additional_details') {
-                		this.additionalDetails = new BoxGenericJsonObject(value);
-                	} else if (key == 'accessible_by') {
-                		this.accessibleBy = (BoxCollaborator.Info) BoxResource.parseBoxResource(value);                	
-                	} else if (key == 'created_by') {
-                		this.createdBy = new BoxUser.Info(value);
-                	} else if (key == 'session_id') {
-                		this.sessionID = value;
-                	}
-            	}
-    	}
-    	
+
+        @testvisible
+        private void parseMember(String key, String value) {
+                if (key != null) {
+                    if (key == 'source_info') {
+                           this.sourceInfo = BoxResource.parseBoxResource(value);
+                    } else if (key == 'event_type') {
+                        this.eventType = this.parseEventType(value);
+                    } else if (key == 'source_json') {
+                        this.sourceJSON = new BoxGenericJsonObject(value);
+                    } else if (key == 'created_at') {
+                        this.createdAt = BoxDateFormat.parseBoxDateTimeString(value);
+                    } else if (key == 'ip_address') {
+                        this.ipAddress = value;
+                    } else if (key == 'additional_details') {
+                        this.additionalDetails = new BoxGenericJsonObject(value);
+                    } else if (key == 'accessible_by') {
+                        this.accessibleBy = (BoxCollaborator.Info) BoxResource.parseBoxResource(value);
+                    } else if (key == 'created_by') {
+                        this.createdBy = new BoxUser.Info(value);
+                    } else if (key == 'session_id') {
+                        this.sessionID = value;
+                    }
+                }
+        }
+
         @testvisible 
-    	private BoxEvent.Type parseEventType(String value) {
-   			if (value != null) {
-        		if (value == 'item_create') {
-               		return BoxEvent.Type.ITEM_CREATE;
-            	} else if (value == 'item_upload') {
-            		return BoxEvent.Type.ITEM_UPLOAD;
-            	} else if (value == 'comment_create') {
-            		return BoxEvent.Type.COMMENT_CREATE;
-        		} else if (value == 'item_download') {
-               		return BoxEvent.Type.ITEM_DOWNLOAD;
-        		} else if (value == 'item_preview') {
-               		return BoxEvent.Type.ITEM_PREVIEW;
-            	} else if (value == 'item_move') {
-               		return BoxEvent.Type.ITEM_MOVE;
-            	} else if (value == 'item_copy') {
-               		return BoxEvent.Type.ITEM_COPY;
-            	} else if (value == 'task_assignment_create') {
-               		return BoxEvent.Type.TASK_ASSIGNMENT_CREATE;
-            	} else if (value == 'lock_create') {
-               		return BoxEvent.Type.LOCK_CREATE;
-            	} else if (value == 'lock_destroy') {
-               		return BoxEvent.Type.LOCK_DESTROY;
-            	} else if (value == 'item_trash') {
-               		return BoxEvent.Type.ITEM_TRASH;
-        		} else if (value == 'item_undelete_via_trash') {
-               		return BoxEvent.Type.ITEM_UNDELETE_VIA_TRASH;
-        		} else if (value == 'collab_add_collaborator') {
-           	    	return BoxEvent.Type.COLLAB_ADD_COLLABORATOR;
-            	} else if (value == 'collab_remove_collaborator') {
-               		return BoxEvent.Type.COLLAB_REMOVE_COLLABORATOR;
-            	} else if (value == 'collab_invite_collaborator') {
-               		return BoxEvent.Type.COLLAB_INVITE_COLLABORATOR;
-           	 	} else if (value == 'collab_role_change') {
-               		return BoxEvent.Type.COLLAB_ROLE_CHANGE;
-            	} else if (value == 'item_sync') {
-               		return BoxEvent.Type.ITEM_SYNC;
-            	} else if (value == 'item_unsync') {
-               		return BoxEvent.Type.ITEM_UNSYNC;
-            	} else if (value == 'item_rename') {
-               		return BoxEvent.Type.ITEM_RENAME;
-            	} else if (value == 'item_shared_create') {
-               		return BoxEvent.Type.ITEM_SHARED_CREATE;
-            	} else if (value == 'item_shared_unshare') {
-               		return BoxEvent.Type.ITEM_SHARED_UNSHARE;
-            	} else if (value == 'item_shared') {
-               		return BoxEvent.Type.ITEM_SHARED;
-            	} else if (value == 'tag_item_create') {
-               		return BoxEvent.Type.TAG_ITEM_CREATE;
-            	} else if (value == 'add_login_activity_device') {
-               		return BoxEvent.Type.ADD_LOGIN_ACTIVITY_DEVICE;
-            	} else if (value == 'remove_login_activity_device') {
-             	  	return BoxEvent.Type.REMOVE_LOGIN_ACTIVITY_DEVICE;
-            	} else if (value == 'change_admin_role') {
-              	 	return BoxEvent.Type.CHANGE_ADMIN_ROLE;
-				} else if (value == 'group_add_user') {
-				    return BoxEvent.Type.GROUP_ADD_USER;
-				} else if (value == 'new_user') {
-				    return BoxEvent.Type.NEW_USER;
-				} else if (value == 'group_creation') {
-				    return BoxEvent.Type.GROUP_CREATION;
-				} else if (value == 'group_deletion') {
-				    return BoxEvent.Type.GROUP_DELETION;
-				} else if (value == 'delete_user') {
-				    return BoxEvent.Type.DELETE_USER;
-				} else if (value == 'group_edited') {
-				    return BoxEvent.Type.GROUP_EDITED;
-				} else if (value == 'edit_user') {
-				    return BoxEvent.Type.EDIT_USER;
-				} else if (value == 'group_add_folder') {
-				    return BoxEvent.Type.GROUP_ADD_FOLDER;
-				} else if (value == 'group_remove_user') {
-				    return BoxEvent.Type.GROUP_REMOVE_USER;
-				} else if (value == 'group_remove_folder') {
-				    return BoxEvent.Type.GROUP_REMOVE_FOLDER;
-				} else if (value == 'admin_login') {
-				    return BoxEvent.Type.ADMIN_LOGIN;
-				} else if (value == 'add_device_association') {
-				    return BoxEvent.Type.ADD_DEVICE_ASSOCIATION;
-				} else if (value == 'failed_login') {
-				    return BoxEvent.Type.FAILED_LOGIN;
-				} else if (value == 'login') {
-				    return BoxEvent.Type.LOGIN;
-				} else if (value == 'user_authenticate_oauth2_token_refresh') {
-				    return BoxEvent.Type.USER_AUTHENTICATE_OAUTH2_TOKEN_REFRESH;
-				} else if (value == 'remove_device_association') {
-				    return BoxEvent.Type.REMOVE_DEVICE_ASSOCIATION;
-				} else if (value == 'terms_of_service_agree') {
-				    return BoxEvent.Type.TERMS_OF_SERVICE_AGREE;
-				} else if (value == 'terms_of_service_reject') {
-				    return BoxEvent.Type.TERMS_OF_SERVICE_REJECT;
-				} else if (value == 'copy') {
-				    return BoxEvent.Type.COPY;
-				} else if (value == 'delete') {
-					//TODO check if this rename looks ok!
-				    return BoxEvent.Type.ITEM_DELETE;
-				} else if (value == 'download') {
-				    return BoxEvent.Type.DOWNLOAD;
-				} else if (value == 'edit') {
-				    return BoxEvent.Type.EDIT;
-				} else if (value == 'lock') {
-				    return BoxEvent.Type.LOCK;
-				} else if (value == 'move') {
-				    return BoxEvent.Type.MOVE;
-				} else if (value == 'preview') {
-				    return BoxEvent.Type.PREVIEW;
-				} else if (value == 'rename') {
-				    return BoxEvent.Type.RENAME;
-				} else if (value == 'storage_expiration') {
-				    return BoxEvent.Type.STORAGE_EXPIRATION;
-				} else if (value == 'undelete') {
-				  //TODO check if this rename looks ok!			
-				   return BoxEvent.Type.ITEM_UNDELETE;
-				} else if (value == 'unlock') {
-				    return BoxEvent.Type.UNLOCK;
-				} else if (value == 'upload') {
-				    return BoxEvent.Type.UPLOAD;
-				} else if (value == 'share') {
-				    return BoxEvent.Type.SHARE;
-				} else if (value == 'item_shared_update') {
-				    return BoxEvent.Type.ITEM_SHARED_UPDATE;
-				} else if (value == 'update_share_expiration') {
-				    return BoxEvent.Type.UPDATE_SHARE_EXPIRATION;
-				} else if (value == 'share_expiration') {
-				    return BoxEvent.Type.SHARE_EXPIRATION;
-				} else if (value == 'unshare') {
-				    return BoxEvent.Type.UNSHARE;
-				} else if (value == 'collaboration_accept') {
-				    return BoxEvent.Type.COLLABORATION_ACCEPT;
-				} else if (value == 'collaboration_role_change') {
-				    return BoxEvent.Type.COLLABORATION_ROLE_CHANGE;
-				} else if (value == 'update_collaboration_expiration') {
-				    return BoxEvent.Type.UPDATE_COLLABORATION_EXPIRATION;
-				} else if (value == 'collaboration_remove') {
-				    return BoxEvent.Type.COLLABORATION_REMOVE;
-				} else if (value == 'collaboration_invite') {
-				    return BoxEvent.Type.COLLABORATION_INVITE;
-				} else if (value == 'collaboration_expiration') {
-        		    return BoxEvent.Type.COLLABORATION_EXPIRATION;
-        		}    	
-   			}	          
-      	 	return BoxEvent.Type.UNKNOWN;
-    	}
+        private BoxEvent.Type parseEventType(String value) {
+               if (value != null) {
+                   if (value == 'item_create') {
+                       return BoxEvent.Type.ITEM_CREATE;
+                   } else if (value == 'item_upload') {
+                       return BoxEvent.Type.ITEM_UPLOAD;
+                   } else if (value == 'comment_create') {
+                       return BoxEvent.Type.COMMENT_CREATE;
+                   } else if (value == 'item_download') {
+                       return BoxEvent.Type.ITEM_DOWNLOAD;
+                   } else if (value == 'item_preview') {
+                       return BoxEvent.Type.ITEM_PREVIEW;
+                   } else if (value == 'item_move') {
+                       return BoxEvent.Type.ITEM_MOVE;
+                   } else if (value == 'item_copy') {
+                       return BoxEvent.Type.ITEM_COPY;
+                   } else if (value == 'task_assignment_create') {
+                       return BoxEvent.Type.TASK_ASSIGNMENT_CREATE;
+                   } else if (value == 'lock_create') {
+                       return BoxEvent.Type.LOCK_CREATE;
+                   } else if (value == 'lock_destroy') {
+                       return BoxEvent.Type.LOCK_DESTROY;
+                   } else if (value == 'item_trash') {
+                       return BoxEvent.Type.ITEM_TRASH;
+                   } else if (value == 'item_undelete_via_trash') {
+                       return BoxEvent.Type.ITEM_UNDELETE_VIA_TRASH;
+                   } else if (value == 'collab_add_collaborator') {
+                       return BoxEvent.Type.COLLAB_ADD_COLLABORATOR;
+                   } else if (value == 'collab_remove_collaborator') {
+                       return BoxEvent.Type.COLLAB_REMOVE_COLLABORATOR;
+                   } else if (value == 'collab_invite_collaborator') {
+                       return BoxEvent.Type.COLLAB_INVITE_COLLABORATOR;
+                   } else if (value == 'collab_role_change') {
+                       return BoxEvent.Type.COLLAB_ROLE_CHANGE;
+                   } else if (value == 'item_sync') {
+                       return BoxEvent.Type.ITEM_SYNC;
+                   } else if (value == 'item_unsync') {
+                       return BoxEvent.Type.ITEM_UNSYNC;
+                   } else if (value == 'item_rename') {
+                      return BoxEvent.Type.ITEM_RENAME;
+                   } else if (value == 'item_shared_create') {
+                      return BoxEvent.Type.ITEM_SHARED_CREATE;
+                   } else if (value == 'item_shared_unshare') {
+                      return BoxEvent.Type.ITEM_SHARED_UNSHARE;
+                   } else if (value == 'item_shared') {
+                      return BoxEvent.Type.ITEM_SHARED;
+                   } else if (value == 'tag_item_create') {
+                      return BoxEvent.Type.TAG_ITEM_CREATE;
+                   } else if (value == 'add_login_activity_device') {
+                      return BoxEvent.Type.ADD_LOGIN_ACTIVITY_DEVICE;
+                   } else if (value == 'remove_login_activity_device') {
+                      return BoxEvent.Type.REMOVE_LOGIN_ACTIVITY_DEVICE;
+                   } else if (value == 'change_admin_role') {
+                      return BoxEvent.Type.CHANGE_ADMIN_ROLE;
+                   } else if (value == 'group_add_user') {
+                      return BoxEvent.Type.GROUP_ADD_USER;
+                   } else if (value == 'new_user') {
+                      return BoxEvent.Type.NEW_USER;
+                   } else if (value == 'group_creation') {
+                      return BoxEvent.Type.GROUP_CREATION;
+                   } else if (value == 'group_deletion') {
+                      return BoxEvent.Type.GROUP_DELETION;
+                   } else if (value == 'delete_user') {
+                      return BoxEvent.Type.DELETE_USER;
+                   } else if (value == 'group_edited') {
+                      return BoxEvent.Type.GROUP_EDITED;
+                   } else if (value == 'edit_user') {
+                      return BoxEvent.Type.EDIT_USER;
+                   } else if (value == 'group_add_folder') {
+                      return BoxEvent.Type.GROUP_ADD_FOLDER;
+                   } else if (value == 'group_remove_user') {
+                      return BoxEvent.Type.GROUP_REMOVE_USER;
+                   } else if (value == 'group_remove_folder') {
+                      return BoxEvent.Type.GROUP_REMOVE_FOLDER;
+                   } else if (value == 'admin_login') {
+                      return BoxEvent.Type.ADMIN_LOGIN;
+                   } else if (value == 'add_device_association') {
+                      return BoxEvent.Type.ADD_DEVICE_ASSOCIATION;
+                   } else if (value == 'failed_login') {
+                      return BoxEvent.Type.FAILED_LOGIN;
+                   } else if (value == 'login') {
+                      return BoxEvent.Type.LOGIN;
+                   } else if (value == 'user_authenticate_oauth2_token_refresh') {
+                      return BoxEvent.Type.USER_AUTHENTICATE_OAUTH2_TOKEN_REFRESH;
+                   } else if (value == 'remove_device_association') {
+                      return BoxEvent.Type.REMOVE_DEVICE_ASSOCIATION;
+                   } else if (value == 'terms_of_service_agree') {
+                      return BoxEvent.Type.TERMS_OF_SERVICE_AGREE;
+                   } else if (value == 'terms_of_service_reject') {
+                      return BoxEvent.Type.TERMS_OF_SERVICE_REJECT;
+                   } else if (value == 'copy') {
+                      return BoxEvent.Type.COPY;
+                   } else if (value == 'delete') {
+                      return BoxEvent.Type.ITEM_DELETE;
+                   } else if (value == 'download') {
+                      return BoxEvent.Type.DOWNLOAD;
+                   } else if (value == 'edit') {
+                      return BoxEvent.Type.EDIT;
+                   } else if (value == 'lock') {
+                      return BoxEvent.Type.LOCK;
+                   } else if (value == 'move') {
+                      return BoxEvent.Type.MOVE;
+                   } else if (value == 'preview') {
+                      return BoxEvent.Type.PREVIEW;
+                   } else if (value == 'rename') {
+                      return BoxEvent.Type.RENAME;
+                   } else if (value == 'storage_expiration') {
+                      return BoxEvent.Type.STORAGE_EXPIRATION;
+                   } else if (value == 'undelete') {
+                      return BoxEvent.Type.ITEM_UNDELETE;
+                   } else if (value == 'unlock') {
+                      return BoxEvent.Type.UNLOCK;
+                   } else if (value == 'upload') {
+                      return BoxEvent.Type.UPLOAD;
+                   } else if (value == 'share') {
+                      return BoxEvent.Type.SHARE;
+                   } else if (value == 'item_shared_update') {
+                      return BoxEvent.Type.ITEM_SHARED_UPDATE;
+                   } else if (value == 'update_share_expiration') {
+                      return BoxEvent.Type.UPDATE_SHARE_EXPIRATION;
+                   } else if (value == 'share_expiration') {
+                      return BoxEvent.Type.SHARE_EXPIRATION;
+                   } else if (value == 'unshare') {
+                      return BoxEvent.Type.UNSHARE;
+                   } else if (value == 'collaboration_accept') {
+                      return BoxEvent.Type.COLLABORATION_ACCEPT;
+                   } else if (value == 'collaboration_role_change') {
+                      return BoxEvent.Type.COLLABORATION_ROLE_CHANGE;
+                   } else if (value == 'update_collaboration_expiration') {
+                      return BoxEvent.Type.UPDATE_COLLABORATION_EXPIRATION;
+                   } else if (value == 'collaboration_remove') {
+                      return BoxEvent.Type.COLLABORATION_REMOVE;
+                   } else if (value == 'collaboration_invite') {
+                      return BoxEvent.Type.COLLABORATION_INVITE;
+                   } else if (value == 'collaboration_expiration') {
+                      return BoxEvent.Type.COLLABORATION_EXPIRATION;
+                   }
+               }
+               return BoxEvent.Type.UNKNOWN;
+        }
     }
-    
+
     /**
      * Enumerates the possible types for an event.
      */

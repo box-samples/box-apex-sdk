@@ -1,129 +1,157 @@
 public class BoxSharedLink extends BoxResource{
-	public BoxSharedLink(BoxApiConnection api, String id) {
+
+    public BoxSharedLink(BoxApiConnection api, String id) {
         super(api, id);
     }
-    
+
     public override String getObjectType() {
         return 'shared_link';
     }
-    
+
     public override void setInfo(BoxJsonObject jsonObject) {
         this.information = (BoxSharedLink.Info) jsonObject;
     }
-    
+
     public class Info extends BoxResource.Info {
-		public String url {get; private set;}
-    	public String downloadUrl {get; private set;}
-    	public String vanityUrl {get; private set;}
-    	public Boolean isPasswordEnabled {get; private set;}
-    	public DateTime unsharedAt {get; private set;}
-    	public long downloadCount {get; private set;}
-    	public long previewCount {get; private set;}
-    	public BoxSharedLink.Access access {get; private set;}
-    	public BoxSharedLink.Permissions permissions {get; private set;}
-    	
-    	public Info() { 
+
+        public String url {get; private set;}
+        public String downloadUrl {get; private set;}
+        public String vanityUrl {get; private set;}
+        public Boolean isPasswordEnabled {get; private set;}
+        public DateTime unsharedAt {get; private set;}
+        public long downloadCount {get; private set;}
+        public long previewCount {get; private set;}
+        public BoxSharedLink.Access access {get; private set;}
+        public BoxSharedLink.Permissions permissions {get; private set;}
+
+        public Info() { 
             super();
         }
-        
+
         public Info(String jsonString) {
             super(jsonString);
             for (String key : this.children.keySet()) {
-            	this.parseMember(key, this.children.get(key));
+                this.parseMember(key, this.children.get(key));
             }
         }
-        
+
         public Info(BoxJsonObject jsonObject) {
             super(jsonObject);
             for (String key : this.children.keySet()) {
-            	this.parseMember(key, this.children.get(key));
+                this.parseMember(key, this.children.get(key));
             }
         }
-        
+
+        public Info(String access, String unsharedAt, String password, String permissions, Boolean canDownload, Boolean canPreview, String effectiveAccess)
+        {
+            super();
+            if (access != null) {
+                this.addValue('access', access);
+            } 
+            if (unsharedAt != null) {
+                this.addValue('unshared_at', unsharedAt);
+            }
+            if (password != null) {
+                this.addValue('password', password);
+            }
+            if (permissions != null) {
+                this.addValue('permissions', permissions);
+            }
+            if (canDownload != null) {
+                this.addValue('can_download', String.valueOf(canDownload));
+            }
+            if (canPreview != null) {
+                this.addValue('password', String.valueOf(canPreview));
+            }
+            if (effectiveAccess != null) {
+                this.addValue('effective_access', effectiveAccess);
+            }
+        }
+
         public override void addValue(String key, String value) {
             super.addValue(key, value);
             if (key != null) {
                 this.parseMember(key, value);
             }
         }
-        
+
         public override void addValue(String key, BoxJsonObject value) {
             this.addValue(key, value.getJsonString());
         }
-        
+
         @testvisible
         private void parseMember(String key, String value) {
             super.parseResourceMember(key, value);
             if (key != null) {
-    			if (key == 'url') {
-                	this.url = value;
-                } else if  (key == 'download_url') {
+                if (key == 'url') {
+                    this.url = value;
+                } else if (key == 'download_url') {
                     this.downloadUrl = value;
-                } else if  (key == 'vanity_url') {
+                } else if (key == 'vanity_url') {
                     this.vanityUrl = value;
-                } else if  (key == 'is_password_enabled') {
+                } else if (key == 'is_password_enabled') {
                     this.isPasswordEnabled = Boolean.valueOf(value);
-                } else if  (key == 'unshared_at') {
+                } else if (key == 'unshared_at') {
                     this.unsharedAt = BoxDateFormat.parseBoxDateTimeString(value);
-                } else if  (key == 'download_count') {
+                } else if (key == 'download_count') {
                     this.downloadCount = long.valueOf(value);
-                } else if  (key == 'preview_count') {
+                } else if (key == 'preview_count') {
                     this.previewCount = long.valueOf(value);
-                } else if  (key == 'access') {
+                } else if (key == 'access') {
                     this.access = BoxSharedLink.parseAccess(value);
-                } else if  (key == 'permissions') {
+                } else if (key == 'permissions') {
                     this.permissions = new Permissions(value);
                 }
             }
         }
-    }        
-    
+    }
+
     public class Permissions extends BoxResource.Info {
+
         public Boolean canDownload {get; private set;}
         public Boolean canPreview {get; private set;}
-        
+
         public Permissions() {
             super();
         }
-        
+
         public Permissions(String jsonString) {
             super(jsonString);
             for (String key : this.children.keySet()) {
-           		this.parseMember(key, this.children.get(key));
+                   this.parseMember(key, this.children.get(key));
             }
         }
-        
+
         public Permissions(BoxJsonObject jsonObject) {
             super(jsonObject);
             for (String key : this.children.keySet()) {
-            	this.parseMember(key, this.children.get(key));
+                this.parseMember(key, this.children.get(key));
             }
         }
-        
+
         public override void addValue(String key, String value) {
-        	super.addValue(key, value);
-        	if (key != null) {
-        		this.parseMember(key, value);
-        		this.rebuildJsonString = true;
-        	}
+            super.addValue(key, value);
+            if (key != null) {
+                this.parseMember(key, value);
+                this.rebuildJsonString = true;
+            }
         }
-        
+
         public override void addValue(String key, BoxJsonObject value) {
-        	this.addValue(key, value.getJsonString());
+            this.addValue(key, value.getJsonString());
         }
-        
+
         private void parseMember(String key, String value) {
             if (key != null) {
-            	if (key == 'can_download') {
-                	this.canDownload = Boolean.valueOf(value);
-                } else if  (key == 'can_preview') {
+                if (key == 'can_download') {
+                    this.canDownload = Boolean.valueOf(value);
+                } else if (key == 'can_preview') {
                     this.canPreview = Boolean.valueOf(value);
                 }
             }
         }
-        
     }
-    
+
     /**
      * Enumerates the possible access levels that can be set on a shared link.
      */
@@ -148,32 +176,32 @@ public class BoxSharedLink extends BoxResource{
          */
         COLLABORATORS
     }
-    
+
     public static BoxSharedLink.Access parseAccess(String value) {
-		if (value != null) {
-			if (value == 'default') {
-               	return BoxSharedLink.Access.DEFAULT_ACCESS;
-            } else if  (value == 'open') {
-             	return BoxSharedLink.Access.OPEN;
-            } else if  (value == 'company') {
-             	return BoxSharedLink.Access.COMPANY;
-            } else if  (value == 'collaborators') {
-             	return BoxSharedLink.Access.COLLABORATORS;
+        if (value != null) {
+            if (value == 'default') {
+                return BoxSharedLink.Access.DEFAULT_ACCESS;
+            } else if (value == 'open') {
+                return BoxSharedLink.Access.OPEN;
+            } else if (value == 'company') {
+                return BoxSharedLink.Access.COMPANY;
+            } else if (value == 'collaborators') {
+                return BoxSharedLink.Access.COLLABORATORS;
             }
-     	}
-     	return null;
+         }
+         return null;
     }
-    
+
     public static String getAccessAsString(BoxSharedLink.Access value) {
-    	if (value == BoxSharedLink.Access.DEFAULT_ACCESS) {
-    		return 'default';
-    	} else if (value == BoxSharedLink.Access.OPEN) {
-    		return 'open';
-    	} else if (value == BoxSharedLink.Access.COMPANY) {
-    		return 'company';
-    	} else if (value == BoxSharedLink.Access.COLLABORATORS) {
-    		return 'collaborators';
-    	}
-    	return null;
+        if (value == BoxSharedLink.Access.DEFAULT_ACCESS) {
+            return 'default';
+        } else if (value == BoxSharedLink.Access.OPEN) {
+            return 'open';
+        } else if (value == BoxSharedLink.Access.COMPANY) {
+            return 'company';
+        } else if (value == BoxSharedLink.Access.COLLABORATORS) {
+            return 'collaborators';
+        }
+        return null;
     }
 }

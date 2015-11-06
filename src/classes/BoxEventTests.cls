@@ -16,10 +16,10 @@ public class BoxEventTests {
       } 
       
       list<BoxEvent.Type> expectedEventNames = BoxEvent.Type.values();
+      
       System.assertEquals(eventTypes, expectedEventNames);           
     }
     
-    // ToDo: Fix the test Nullptr exception at 45
     public static testmethod void testParseMember() {
         BoxApiConnection api = new BoxApiConnection('accesstoken');
 		BoxEvent event = new BoxEvent(api,'10543463');
@@ -28,7 +28,8 @@ public class BoxEventTests {
 		BoxUser user = new BoxUser(api,'10543463');        
 		BoxUser.Info userInfo = new BoxUser.Info();
         userInfo.addValue('name', 'Arielle Frey');
-        userInfo.addValue('id', '10543463');               
+        userInfo.addValue('id', '10543463');
+        userInfo.addValue('type', 'user');
         
 		Test.startTest();
 		eventInfo.parseMember('event_type', 'item_upload');
