@@ -45,7 +45,7 @@ For scenarios where you only want to grant authorization once and store
 access and refresh tokens yourself, you can create an API connection with
 the tokens directly.  It's up to you how to store these tokens but it's 
 important to store them securely.  Hierarchical custom settings are a
-good place to start.  Encrypting the fields is a priority for security
+good place to start.  Encrypting the fields you store tokens in is important 
 since having these tokens and your client information grants full access
 to the Box account they're associated with.
 
@@ -72,4 +72,13 @@ api.setAutoRefresh(false);
 api.refresh();
 ```
 
+Concurrency Concerns
+--------------------
+Salesforce doesn't handle concurrency very well when it comes to token refreshes.  
+Write your code in such a way that token refreshes are in static methods and 
+try to follow the singleton design pattern.  If you have a concurrency issue
+that can't be solved with good code design alone, contact [Box Support][box-support] 
+to explore other available options.
+
 [oauth-authorize]: https://box-content.readme.io/reference#authorize
+[box-support]:https://community.box.com/t5/Help/ct-p/Support
