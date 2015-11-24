@@ -59,7 +59,7 @@ Auto-Refresh
 
 By default, a `BoxApiConnection` will automatically refresh the access token if
 it has expired. To disable auto-refresh, set the connection's auto-refresh
-setting to false with [`setAutoRefresh(false)`]. Keep in mind that
+setting to false with `setAutoRefresh(false)`. Keep in mind that
 you will have to manually refresh the access token yourself.
 
 ```java
