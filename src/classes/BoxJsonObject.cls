@@ -57,6 +57,7 @@ public abstract class BoxJsonObject {
 
     /**
      * Constructs a BoxJsonObject by decoding it from a JSON string.
+     *
      * @param String jsonString The JSON string to decode.
      */
     public BoxJsonObject(String jsonString) {
@@ -70,6 +71,7 @@ public abstract class BoxJsonObject {
 
     /**
      * Constructs a BoxJsonObject using an already parsed JSON object.
+     *
      * @param BoxJsonObject jsonObject The parsed JSON object.
      */
     public BoxJsonObject(BoxJsonObject jsonObject) {
@@ -80,6 +82,7 @@ public abstract class BoxJsonObject {
 
     /**
      * Gets a current value in the children map
+     *
      * @param String key The key value of the children map to look up.
      */
     public String getValue(String key) {
@@ -88,6 +91,7 @@ public abstract class BoxJsonObject {
 
     /**
      * Adds a value to the children map
+     *
      * @param String key The key to be added to the map.
      * @param String value The value to be added to the map.
      */
@@ -100,6 +104,7 @@ public abstract class BoxJsonObject {
 
     /**
      * Adds a value to the children map from an existing BoxJsonObject (adding a folder to the "parent", for example)
+     *
      * @param String key The key to be added to the map.
      * @param BoxJsonObject value The value to be added to the map after converting to a raw json string.
      */
@@ -144,6 +149,7 @@ public abstract class BoxJsonObject {
 
     /**
      * Creates a JSONParser from raw json and passes that to parse() to get key/value pairs
+     *
      * @param String jsonString The raw json to parse.
      */
     private void readFrom(String jsonString) {
@@ -158,6 +164,7 @@ public abstract class BoxJsonObject {
 
     /**
      * Parses a JSONParser to create key/value pairs of the child elements of the json.
+     *
      * @param JSONParser parser The JSONParser to parse.
      */
     private void parse (JSONParser parser) {
@@ -202,6 +209,7 @@ public abstract class BoxJsonObject {
     /**
      * Returns the string value of the json contained within a child element.
      * This is useful for child objects or arrays.
+     *
      * @param JSONParser parser The JSONParser that is currently being parsed.
      * @param JSONToken expectedToken The JSONToken that signals the end of this child object.
      */
@@ -249,6 +257,7 @@ public abstract class BoxJsonObject {
 
     /**
      * Handles json string building from JSONTokens
+     *
      * @param String value The in-progress string of the value for the current child element.
      * @param String currentValue The value being appended to the value for the current child element.
      */
@@ -262,6 +271,12 @@ public abstract class BoxJsonObject {
         }
     }
 
+    /**
+     * Constructs a collection of Strings by decoding it from an String containing JSON string array.
+     *
+     * @param  jsonStringArray The JSON string to decode.
+     * @return collection of Strings.
+     */
     public static list<String> parseJsonStringArray(String jsonStringArray) {
         list<String> strings = new list<String>();
         JsonParser parser;
@@ -284,6 +299,12 @@ public abstract class BoxJsonObject {
         return strings;
     }
 
+    /**
+     * Constructs a collection of Strings by decoding it from an String containing JSON object array.
+     *
+     * @param  jsonString The JSON string to decode.
+     * @return collection of Strings.
+     */
     public static list<String> parseJsonObjectArray(String jsonString) {
         list<String> strings = new list<String>();
         JsonParser parser;

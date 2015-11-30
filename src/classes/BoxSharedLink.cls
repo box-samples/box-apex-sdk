@@ -1,5 +1,15 @@
+/**
+ * Represents a link to a file or folder on Box.
+ */
+
 public class BoxSharedLink extends BoxResource{
 
+    /**
+     * Constructs a BoxSharedLink for an item with a given ID.
+     *
+     * @param  api the API connection to be used by the item.
+     * @param  id  the ID of the item.
+     */
     public BoxSharedLink(BoxApiConnection api, String id) {
         super(api, id);
     }
@@ -12,6 +22,9 @@ public class BoxSharedLink extends BoxResource{
         this.information = (BoxSharedLink.Info) jsonObject;
     }
 
+    /**
+     * Contains information about a shared link.
+     */
     public class Info extends BoxResource.Info {
 
         public String url {get; private set;}
@@ -24,10 +37,18 @@ public class BoxSharedLink extends BoxResource{
         public BoxSharedLink.Access access {get; private set;}
         public BoxSharedLink.Permissions permissions {get; private set;}
 
-        public Info() { 
+        /**
+         * Constructs an empty Info object.
+         */
+        public Info() {
             super();
         }
 
+        /**
+         * Constructs an Info object by parsing information from a JSON string.
+         *
+         * @param  json the JSON string to parse.
+         */
         public Info(String jsonString) {
             super(jsonString);
             for (String key : this.children.keySet()) {
@@ -35,6 +56,11 @@ public class BoxSharedLink extends BoxResource{
             }
         }
 
+        /**
+         * Constructs an Info object using an already parsed JSON object.
+         *
+         * @param  jsonObject the parsed JSON object.
+         */
         public Info(BoxJsonObject jsonObject) {
             super(jsonObject);
             for (String key : this.children.keySet()) {
@@ -42,6 +68,18 @@ public class BoxSharedLink extends BoxResource{
             }
         }
 
+        /**
+         * Constructs an Info object using parameters passed in.
+         *
+         * @param  access           the level of access required for this shared link. Can be open, company, collaborators, or null to get default share level.
+         * @param  unshared_at      the day that this link should be disabled at. Timestamps are rounded off to the given day. This field can only be set if the user is not a free user.
+         * @param  password         requiring a password before viewing a shared link.
+         * @param  permissions      the set of permissions that apply to this link
+         * @param  can_download     whether this link allows downloads.
+         * @param  can_preview      whether this link allows previewing. Can only be used with open and company
+         * @param  effective_access read-only attribute returned in object The access level set by the enterprise administrator.
+         *                          This will override any previous access levels set for the shared link and prevent any less-restrictive access levels to be set
+         */
         public Info(String access, String unsharedAt, String password, String permissions, Boolean canDownload, Boolean canPreview, String effectiveAccess)
         {
             super();
@@ -106,6 +144,9 @@ public class BoxSharedLink extends BoxResource{
         }
     }
 
+    /**
+     * Contains permissions fields that can be set on a shared link.
+     */
     public class Permissions extends BoxResource.Info {
 
         public Boolean canDownload {get; private set;}

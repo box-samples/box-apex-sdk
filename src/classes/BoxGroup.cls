@@ -25,8 +25,8 @@ public class BoxGroup extends BoxCollaborator {
         this.information = (BoxGroup.Info) jsonObject;
     }
 
-    public static BoxGroup.Info create(BoxApiConnection api, String groupName) {
-        return create(api, groupName, null, null, null, null, null);
+    public static BoxGroup.Info createGroup(BoxApiConnection api, String groupName) {
+        return createGroup(api, groupName, null, null, null, null, null);
     }
 
     /**
@@ -36,7 +36,7 @@ public class BoxGroup extends BoxCollaborator {
      * @param  name the name of the new group.
      * @return      info about the created group.
      */
-    public static BoxGroup.Info create(BoxApiConnection api, String groupName, String provenance, String externalSyncIdentifier, String description, String invitabilityLevel, String memberViewabilityLevel) {
+    public static BoxGroup.Info createGroup(BoxApiConnection api, String groupName, String provenance, String externalSyncIdentifier, String description, String invitabilityLevel, String memberViewabilityLevel) {
         BoxApiRequest request = new BoxApiRequest(api, api.baseUrl + CREATE_GROUP_URL, BoxApiRequest.METHOD_POST);
         request.setTimeout(api.timeout);
         request.addJsonContentTypeHeader();

@@ -44,6 +44,12 @@ public abstract class BoxResource {
         return null;
     }
 
+    /**
+     * Parses string into BoxResource.Info object.
+     *
+     * @param  value string to be parsed.
+     * @return information about the BoxResource based on the resourceType.
+     */
     public static BoxResource.Info parseBoxResource(String value) {
         BoxGenericJsonObject jsonObject = new BoxGenericJsonObject(value);
         String resouceType = jsonObject.getValue('type');
@@ -65,10 +71,20 @@ public abstract class BoxResource {
         return null;
     }
 
+    /**
+     * Gets the API connection used by this resource.
+     *
+     * @return the API connection used by this resource.
+     */
     public BoxApiConnection getApi() {
         return this.api;
     }
 
+    /**
+     * Gets the ID of this resource.
+     *
+     * @return the ID of this resource.
+     */
     public String getId() {
         return this.id;
     }
@@ -81,6 +97,13 @@ public abstract class BoxResource {
 
     public abstract String getObjectType();
 
+    /**
+     * Indicates whether this BoxResource is equal to another BoxResource. Two BoxResources are equal if they have the
+     * same type and ID.
+     *
+     * @param  other the other BoxResource to compare.
+     * @return       true if the type and IDs of the two resources are equal; otherwise false.
+     */
     public Boolean equalTo(BoxResource other) {
         if (other == null) {
             return false;
@@ -88,19 +111,35 @@ public abstract class BoxResource {
         return (other.getObjectType() == this.getObjectType() && other.getId() == this.getId());
     }
 
+    /**
+     * Information about BoxRsource.
+     */
     public abstract class Info extends BoxJsonObject {
 
         public String id {get; protected set;}
         public String type {get; protected set;}
 
+        /**
+         * Constructs an empty Info object.
+         */
         public Info() {
             super();
         }
 
+        /**
+         * Constructs an Info object by parsing information from a JSON string.
+         *
+         * @param  json the JSON string to parse.
+         */
         public Info(String jsonString) {
             super(jsonString);
         }
 
+        /**
+         * Constructs an Info object using an already parsed JSON object.
+         *
+         * @param  jsonObject the parsed JSON object.
+         */
         public Info(BoxJsonObject jsonObject) {
             super(jsonObject);
         }

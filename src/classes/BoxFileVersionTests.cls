@@ -1,14 +1,15 @@
 @IsTest
 public class BoxFileVersionTests {
-	public static testmethod void testDeleteFile() {
+	public static testmethod void testDeleteFileVersion() {
     	String mockResponseBody = '{}';
     	Test.setMock(HttpCalloutMock.class, new BoxTestMockCallout(mockResponseBody, 'No Content', 204));
     	
     	BoxApiConnection api = new BoxApiConnection('accesstoken');
     	BoxFileVersion fileVersionToDelete = new BoxFileVersion(api, '871399');
+    	fileVersionToDelete.setFileId('123456');
     	
     	Test.startTest();
-    	Boolean deleteFileVersionResult = fileVersionToDelete.deleteVersion('871399');
+    	Boolean deleteFileVersionResult = fileVersionToDelete.deleteVersion();
     	Test.stopTest();
     	
     	System.assertEquals(true, deleteFileVersionResult);
@@ -19,10 +20,11 @@ public class BoxFileVersionTests {
         Test.setMock(HttpCalloutMock.class, new BoxTestMockCallout(mockResponseBody, 'OK', 200));
         
         BoxApiConnection api = new BoxApiConnection('accesstoken');
-        BoxFileVersion fileVersion = new BoxFileVersion(api, '871390');
+        BoxFileVersion fileVersion = new BoxFileVersion(api, '871399');
+        fileVersion.setFileId('123456');
         
         Test.startTest();
-        BoxFileVersion.Info fileVersionInfo = fileVersion.promoteFileVersion('871390');
+        BoxFileVersion.Info fileVersionInfo = fileVersion.promoteFileVersion();
         Test.stopTest();
         
         System.assertEquals('871399', fileVersionInfo.getValue('id'));

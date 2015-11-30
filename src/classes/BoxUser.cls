@@ -1,3 +1,7 @@
+/**
+ * Represents a Box user account.
+ */
+
 public class BoxUser extends BoxCollaborator {
 
     private static final String USER_URL_TEMPLATE = 'users/{0}';
@@ -9,12 +13,21 @@ public class BoxUser extends BoxCollaborator {
     private static final String MOVE_FOLDER_TO_USER_TEMPLATE = 'users/{0}/folders/{1}';
     private static string GET_USER_EVENTS_URL =  '/events?stream_position={0}&stream_type={1}&limit={2}';
 
+    /**
+     * An array of all possible file fields.
+     */
     public static final String[] ALL_FIELDS = new String[] {'type', 'id', 'name', 'login', 'created_at', 'modified_at', 'role',
         'language', 'timezone', 'space_amount', 'space_used', 'max_upload_size', 'tracking_codes',
         'can_see_managed_users', 'is_sync_enabled', 'is_external_collab_restricted', 'status', 'job_title', 'phone',
         'address', 'avatar_url', 'is_exempt_from_device_limits', 'is_exempt_from_login_verification', 'enterprise',
         'my_tags', 'hostname', 'is_platform_access_only'};
 
+    /**
+     * Constructs a BoxUser with a given ID.
+     *
+     * @param  api the API connection to be used by the item.
+     * @param  id  the ID of the item.
+     */
     public BoxUser(BoxApiConnection api, String id) {
         super(api, id);
     }
@@ -116,7 +129,7 @@ public class BoxUser extends BoxCollaborator {
         request.setTimeout(api.timeout);
 
         HttpResponse response = request.send();
-        String responseBody = BoxApiRequest.getBoxResourceResponseBody(response, 'BoxUser.cetCurrentUser');
+        String responseBody = BoxApiRequest.getBoxResourceResponseBody(response, 'BoxUser.getCurrentUser');
         return new BoxUser.Info(responseBody);
     }
 
@@ -292,6 +305,7 @@ public class BoxUser extends BoxCollaborator {
 
     /**
      * Deletes a user from an enterprise account.
+     * 
      * @param notifyUser whether or not to send an email notification to the user that their account has been deleted.
      * @param force      whether or not this user should be deleted even if they still own files.
      * @return true if successful, false if failed (based on expected status code of 204)
@@ -369,7 +383,7 @@ public class BoxUser extends BoxCollaborator {
         return url;
     }
 
-     /**
+    /**
      * Use this to get events for a given user. A chunk of event objects is returned for the user based on the parameters passed in. 
      * Parameters indicating how many chunks are left as well as the next stream_position are also returned.
      * 
@@ -412,6 +426,9 @@ public class BoxUser extends BoxCollaborator {
         return events;
     }
 
+    /**
+     * Info about BoxUser
+     */
     public class Info extends BoxCollaborator.Info {
 
         public String login {get; private set;}
@@ -437,17 +454,30 @@ public class BoxUser extends BoxCollaborator {
         public List<String> myTags {get; private set;}
         public String hostname {get; private set;}
 
+        /**
+         * Constructs an empty Info object.
+         */
         public Info() {
             super();
         }
 
-       public Info(String jsonString) {
+        /**
+         * Constructs an Info object by parsing information from a JSON string.
+         *
+         * @param  json the JSON string to parse.
+         */
+        public Info(String jsonString) {
             super(jsonString);
             for (String key : this.children.keySet()) {
                 this.parseMember(key, this.children.get(key));
             }
         }
 
+        /**
+         * Constructs an Info object using an already parsed JSON object.
+         *
+         * @param  jsonObject the parsed JSON object.
+         */
         public Info(BoxJsonObject jsonObject) {
             super(jsonObject);
             for (String key : this.children.keySet()) {

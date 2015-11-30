@@ -35,7 +35,7 @@ public class BoxGroupTests {
     	BoxApiConnection api = new BoxApiConnection('accesstoken');
     	
     	Test.startTest();
-    	BoxGroup.Info groupInfo = BoxGroup.create(api, 'Everyone');
+    	BoxGroup.Info groupInfo = BoxGroup.createGroup(api, 'Everyone');
     	Test.stopTest();
     	
     	System.assertEquals('Everyone', groupInfo.getValue('name'));

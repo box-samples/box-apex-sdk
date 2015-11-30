@@ -14,9 +14,11 @@ public class BoxFolder extends BoxItem{
     private static final String CREATE_FOLDER_URL = 'folders';
     private static final String COPY_FOLDER_URL = 'folders/{0}/copy';
     private static final String FOLDER_INFO_URL = 'folders/{0}';
-    private static final String DELETE_FOLDER_URL = 'folders/{0}?recursive{1}';
+    private static final String DELETE_FOLDER_URL = 'folders/{0}?recursive={1}';
     private static final String ADD_COLLABORATION_URL = 'collaborations';
     private static final String GET_COLLABORATIONS_URL = 'folders/{0}/collaborations';
+    private static final String UPLOAD_FILE_URL = 'files/content?parentId={0}';
+    private static final String GET_CHILDREN_URL = 'folders/{0}/items';
 
     /**
      * Constructs a BoxFolder for a folder with a given ID.
@@ -334,6 +336,94 @@ public class BoxFolder extends BoxItem{
         HttpResponse response = request.send();
         String responseBody = BoxApiRequest.getBoxResourceResponseBody(response, 'BoxFolder.rename');
         return new BoxFolder.Info(responseBody);
+    }
+    
+    public BoxFile.Info uploadFile(Attachment att, String newName) {
+    	String fileName = null;
+    	if (!String.isEmpty(newName)) {
+    		fileName = newName;
+    	} else {
+    		fileName = att.Name;
+    	}
+    	return this.uploadFile(att.Body, fileName);
+    }
+    
+    public BoxFile.Info uploadFile(Document doc, String newName) {
+    	String fileName = null;
+    	if (!String.isEmpty(newName)) {
+    		fileName = newName;
+    	} else {
+    		fileName = doc.Name;
+    	}
+    	return this.uploadFile(doc.Body, fileName);
+    }
+    
+    public BoxFile.Info uploadFile(Blob fileBody, String fileName) {
+    	if (String.isEmpty(fileName)) {
+    		throw new BoxResource.BoxResourceException('fileName must not be null or empty when calling BoxFolder.uploadFile.');
+    	}
+    	if (fileBody == null || fileBody.size() == 0) {
+    		throw new BoxResource.BoxResourceException('fileBody must not be null or empty when calling BoxFolder.uploadFile.');
+    	}
+    	
+    	String url = this.api.getBaseUploadUrl() + String.format(UPLOAD_FILE_URL, new String[] {this.getId()});
+    	BoxApiRequest request = new BoxApiRequest(this.api, url, BoxApiRequest.METHOD_POST);
+    	request.setTimeout(this.api.getTimeout());
+    	request.setMultipartFormBody(fileBody, fileName);
+    	
+    	HttpResponse response = request.send();
+    	String responseBody = BoxApiRequest.getBoxResourceResponseBody(response, 'BoxFolder.uploadFile');
+    	BoxGenericJsonObject responseObject = new BoxGenericJsonObject(responseBody);
+    	if (responseObject.getValue('total_count') != null) {
+    		list<String> fileEntries = BoxJsonObject.parseJsonObjectArray(responseObject.getValue('entries'));
+    		if (fileEntries.size() > 0) {
+    			return new BoxFile.Info(fileEntries[0]);
+    		}
+    	}
+    	return null;
+    }
+    
+    public list<BoxItem.Info> getChildren() {
+    	return this.getChildren(null, null);
+    }
+    
+    public list<BoxItem.Info> getChildren(Integer offset, Integer limitCount) {
+    	String urlParams = '';
+    	if (offset != null && offset >= 0) {
+    		urlParams = '?offset=' + offset;
+    	}
+    	if (limitCount != null && limitCount > 0) {
+    		if (urlParams == '') {
+    			urlParams = '?limit=' + limitCount;
+    		} else {
+    			urlParams += '&limit=' + limitCount;
+    		}
+    	}
+    	String url = this.api.getBaseUrl() + String.format(GET_CHILDREN_URL, new String[] {this.getId()}) + urlParams;
+    	BoxApiRequest request = new BoxApiRequest(this.api, url, BoxApiRequest.METHOD_GET);
+    	request.setTimeout(this.api.getTimeout());
+    	request.addJsonContentTypeHeader();
+    	
+    	HttpResponse response = request.send();
+    	String responseBody = BoxApiRequest.getBoxResourceResponseBody(response, 'BoxFolder.getChildren');
+    	
+    	list<BoxItem.Info> children = new list<BoxItem.Info>();
+    	BoxGenericJsonObject responseObject = new BoxGenericJsonObject(responseBody);
+    	if (responseObject.getValue('total_count') != null) {
+    		Integer totalCount = Integer.valueOf(responseObject.getValue('total_count'));
+    		list<String> childEntries = BoxJsonObject.parseJsonObjectArray(responseObject.getValue('entreies'));
+    		for (String entry : childEntries) {
+    			BoxGenericJsonObject entryObject = new BoxGenericJsonObject(entry);
+    			String objectType = entryObject.getValue('type');
+    			if (objectType == 'file') {
+    				children.add(new BoxFile.Info(entryObject));
+    			} else if (objectType == 'folder') {
+    				children.add(new BoxFolder.Info(entryObject));
+    			}
+    		}
+    		System.assertEquals(totalCount, children.size());
+    	}
+    	return children;
     }
 
     /**

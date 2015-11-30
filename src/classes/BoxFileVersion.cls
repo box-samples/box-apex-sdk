@@ -25,14 +25,21 @@ public class BoxFileVersion extends BoxResource {
     public override void setInfo(BoxJsonObject jsonObject) {
         this.information = (BoxFileVersion.Info) jsonObject;
     }
+    
+    public void setFileId(String fileId) {
+    	if (this.information == null) {
+    		this.information = new BoxFileVersion.Info();
+    	}
+    	this.information.addValue('file_id', fileId);
+    }
 
     /**
      * Deletes this version of the file.
      *
      * @return Boolean, true if version is deleted succesfully, false otherwise.
      */
-    public Boolean deleteVersion(string versionId) {
-        return this.deleteVersion(versionId, null);
+    public Boolean deleteVersion() {
+        return this.deleteVersion(null);
     }
 
     /**
@@ -42,8 +49,9 @@ public class BoxFileVersion extends BoxResource {
      * @param  eTag the etag of the file can be included as an ‘If-Match’ header.
      * @return      true if version is deleted succesfully, false otherwise.
      */
-    public Boolean deleteVersion(String versionId, String eTag) {
-        String url = this.api.baseUrl + String.format(FILE_VERSIONS_URL, new String[] {this.getId(), versionId});
+    public Boolean deleteVersion(String eTag) {
+    	BoxFileVersion.Info currentInfo = (BoxFileVersion.Info) this.getInfo();
+        String url = this.api.baseUrl + String.format(FILE_VERSIONS_URL, new String[] {currentInfo.fileId, this.getId()});
         BoxApiRequest request = new BoxApiRequest(this.api, url, BoxApiRequest.METHOD_DELETE);
 
         if(eTag != null) {
@@ -65,8 +73,8 @@ public class BoxFileVersion extends BoxResource {
        * @param  versionId file version id
        * @return           information about new file version
        */
-      public BoxFileVersion.Info promoteFileVersion(String versionId) {
-          return this.promoteVersion('file_version', versionId);
+      public BoxFileVersion.Info promoteFileVersion() {
+          return this.promoteVersion('file_version');
       }
 
       /**
@@ -76,13 +84,14 @@ public class BoxFileVersion extends BoxResource {
        * @param  versionId file version id
        * @return           information about new file version
        */
-      public BoxFileVersion.Info promoteVersion(String itemType, String versionId) {
-        String url = this.api.baseUrl + String.format(FILE_PROMOTE_VERSION_URL, new String[] {this.getId()});
+      public BoxFileVersion.Info promoteVersion(String itemType) {
+      	BoxFileVersion.Info currentInfo = (BoxFileVersion.Info) this.getInfo();
+        String url = this.api.baseUrl + String.format(FILE_PROMOTE_VERSION_URL, new String[] {currentInfo.fileId});
         BoxApiRequest request = new BoxApiRequest(this.api, url, BoxApiRequest.METHOD_POST);
 
         BoxGenericJsonObject jsonObject = new BoxGenericJsonObject();
         jsonObject.addValue('type', itemType);
-        jsonObject.addValue('id', versionId);
+        jsonObject.addValue('id', this.getId());
         request.setBody(jsonObject.getJsonString());
 
         request.setTimeout(this.api.timeout);
@@ -98,7 +107,7 @@ public class BoxFileVersion extends BoxResource {
      */
     public class Info extends BoxResource.Info {
 
-        public final String fileID;
+        public String fileID;
         public String versionID;
         public String sha1;
         public String name;
@@ -151,24 +160,26 @@ public class BoxFileVersion extends BoxResource {
         }
 
          @testvisible
-         private void parseMember(String key, String value) {
-              if (key != null) {
-                  if (key == 'id') {
-                      this.versionID = value;
-                  } else if (key == 'sha1') {
-                      this.sha1 = value;
-                  } else if (key == 'name') {
-                      this.name = value;
-                  } else if (key == 'size') {
-                      this.size = long.valueOf(value);
-                  } else if (key == 'created_at') {
-                      this.createdAt = BoxDateFormat.parseBoxDateTimeString(value);
-                  } else if (key == 'modified_at') {
-                      this.modifiedAt = BoxDateFormat.parseBoxDateTimeString(value);
-                  } else if (key == 'modified_by') {
-                      this.modifiedBy = new BoxUser.Info(value);
+        private void parseMember(String key, String value) {
+            if (key != null) {
+                if (key == 'id') {
+                    this.versionID = value;
+                } else if (key == 'sha1') {
+                    this.sha1 = value;
+                } else if (key == 'name') {
+                    this.name = value;
+                } else if (key == 'size') {
+                    this.size = long.valueOf(value);
+                } else if (key == 'created_at') {
+                    this.createdAt = BoxDateFormat.parseBoxDateTimeString(value);
+                } else if (key == 'modified_at') {
+                    this.modifiedAt = BoxDateFormat.parseBoxDateTimeString(value);
+                } else if (key == 'modified_by') {
+                    this.modifiedBy = new BoxUser.Info(value);
+                } else if (key == 'file_id') {
+                    this.fileId = value;
                 }
-              }
-         }
+            }
+        }
     }
 }
