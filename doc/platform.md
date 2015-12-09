@@ -10,10 +10,10 @@ be for an enterprise user.
 
 How to Authenticate
 -------------------
-*[Create your API key.][box-platform]
-*[Generate your RSA Keypair][rsa-generation] (take note of your Key ID that Box generates for you)
-*Salesforce doesn't handle encrypted private keys so you have to run `openssl pkcs8 -topk8 -nocrypt -in your_private_key.pem -outform PEM` in your terminal.
-*Remove all whitespace (new lines), the `-----BEGIN PRIVATE KEY-----`, and the `-----END PRIVATE KEY-----`.  This final value will be the private key you use to authenticate.
+* [Create your API key.][box-platform]
+* [Generate your RSA Keypair][rsa-generation] (take note of your Key ID that Box generates for you)
+* Salesforce doesn't handle encrypted private keys so you have to run `openssl pkcs8 -topk8 -nocrypt -in your_private_key.pem -outform PEM` in your terminal.
+* Remove all whitespace (new lines), the `-----BEGIN PRIVATE KEY-----`, and the `-----END PRIVATE KEY-----`.  This final value will be the private key you use to authenticate.
 
 The following example creates an enterprise Platform API connection:
 
