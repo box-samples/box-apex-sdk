@@ -1,66 +1,66 @@
-public class BoxDeveloperEditionApiConnection extends BoxApiConnection {
+public class BoxPlatformApiConnection extends BoxApiConnection {
 
     private static final String JWT_AUDIENCE = 'https://api.box.com/oauth2/token';
 
     public final String entityId {get; private set;}
-    public final BoxDeveloperEdition.DeveloperEditionEntityType entityType {get; private set;}
+    public final BoxPlatform.PlatformEntityType entityType {get; private set;}
     public final BoxJwtEncryptionPreferences.EncryptionAlgorithm encryptionAlgorithm {get; private set;}
     public final String publicKeyId {get; private set;}
     public final String privateKey {get; private set;}
     public final String privateKeyPassword {get; private set;}
 
     /**
-     * Disabling an invalid constructor for Box Developer Edition.
+     * Disabling an invalid constructor for Box Platform Edition.
      * @param  accessToken  an initial access token to use for authenticating with the API.
      */
-    public BoxDeveloperEditionApiConnection(String accessToken) {
+    public BoxPlatformApiConnection(String accessToken) {
         super(null);
-        throw new BoxApiConnectionException('This constructor is not available for BoxDeveloperEditionApiConnection.');
+        throw new BoxApiConnectionException('This constructor is not available for BoxPlatformApiConnection.');
     }
 
     /**
-     * Disabling an invalid constructor for Box Developer Edition.
+     * Disabling an invalid constructor for Box Platform Edition.
      * @param  clientID     the client ID to use when requesting an access token.
      * @param  clientSecret the client secret to use when requesting an access token.
      */
-    public BoxDeveloperEditionAPIConnection(String clientID, String clientSecret) {
+    public BoxPlatformApiConnection(String clientID, String clientSecret) {
         super(null);
-        throw new BoxApiConnectionException('This constructor is not available for BoxDeveloperEditionApiConnection.');
+        throw new BoxApiConnectionException('This constructor is not available for BoxPlatformApiConnection.');
     }
 
     /**
-     * Disabling an invalid constructor for Box Developer Edition.
+     * Disabling an invalid constructor for Box Platform Edition.
      * @param  clientID     the client ID to use when exchanging the auth code for an access token.
      * @param  clientSecret the client secret to use when exchanging the auth code for an access token.
      * @param  authCode     an auth code obtained from the first half of the OAuth process.
      */
-    public BoxDeveloperEditionAPIConnection(String clientID, String clientSecret, String authCode) {
+    public BoxPlatformApiConnection(String clientID, String clientSecret, String authCode) {
         super(null);
-        throw new BoxApiConnectionException('This constructor is not available for BoxDeveloperEditionApiConnection.');
+        throw new BoxApiConnectionException('This constructor is not available for BoxPlatformApiConnection.');
     }
 
     /**
-     * Disabling an invalid constructor for Box Developer Edition.
+     * Disabling an invalid constructor for Box Platform Edition.
      * @param  clientID     the client ID to use when refreshing the access token.
      * @param  clientSecret the client secret to use when refreshing the access token.
      * @param  accessToken  an initial access token to use for authenticating with the API.
      * @param  refreshToken an initial refresh token to use when refreshing the access token.
      */
-    public BoxDeveloperEditionAPIConnection(String clientID, String clientSecret, String accessToken, String refreshToken) {
+    public BoxPlatformApiConnection(String clientID, String clientSecret, String accessToken, String refreshToken) {
         super(null);
-        throw new BoxApiConnectionException('This constructor is not available for BoxDeveloperEditionApiConnection.');
+        throw new BoxApiConnectionException('This constructor is not available for BoxPlatformApiConnection.');
     }
 
     /**
-     * Constructs a new BoxDeveloperEditionAPIConnection.
+     * Constructs a new BoxPlatformAPIConnection.
      * @param entityId             enterprise ID or a user ID.
      * @param entityType           the type of entityId.
      * @param clientID             the client ID to use when exchanging the JWT assertion for an access token.
      * @param clientSecret         the client secret to use when exchanging the JWT assertion for an access token.
      * @param encryptionPref       the encryption preferences for signing the JWT.
      */
-    public BoxDeveloperEditionApiConnection(String entityId, 
-                                            BoxDeveloperEdition.DeveloperEditionEntityType entityType, 
+    public BoxPlatformApiConnection(String entityId, 
+                                            BoxPlatform.PlatformEntityType entityType, 
                                             String clientId, 
                                             String clientSecret, 
                                             BoxJwtEncryptionPreferences encryptionPref) {
@@ -74,21 +74,21 @@ public class BoxDeveloperEditionApiConnection extends BoxApiConnection {
     }
 
     /**
-     * Creates a new Box Developer Edition connection with enterprise token.
+     * Creates a new Box Platform Edition connection with enterprise token.
      * @param enterpriseId          the enterprise ID to use for requesting access token.
      * @param clientId              the client ID to use when exchanging the JWT assertion for an access token.
      * @param clientSecret          the client secret to use when exchanging the JWT assertion for an access token.
      * @param encryptionPref        the encryption preferences for signing the JWT.
      * @return a new instance of BoxAPIConnection.
      */
-    public static BoxDeveloperEditionApiConnection getAppEnterpriseConnection(
+    public static BoxPlatformApiConnection getAppEnterpriseConnection(
                       String enterpriseId,
                       String clientId,
                       String clientSecret,
                       BoxJwtEncryptionPreferences encryptionPref) {
-        BoxDeveloperEditionApiConnection connection = new BoxDeveloperEditionApiConnection(
+        BoxPlatformApiConnection connection = new BoxPlatformApiConnection(
             enterpriseId,
-            BoxDeveloperEdition.DeveloperEditionEntityType.ENTERPRISE,
+            BoxPlatform.PlatformEntityType.ENTERPRISE,
             clientId,
             clientSecret,
             encryptionPref);
@@ -97,21 +97,21 @@ public class BoxDeveloperEditionApiConnection extends BoxApiConnection {
     }
 
     /**
-     * Creates a new Box Developer Edition connection with enterprise token.
+     * Creates a new Box Platform Edition connection with enterprise token.
      * @param enterpriseId          the user ID to use for an App User.
      * @param clientId              the client ID to use when exchanging the JWT assertion for an access token.
      * @param clientSecret          the client secret to use when exchanging the JWT assertion for an access token.
      * @param encryptionPref        the encryption preferences for signing the JWT.
      * @return a new instance of BoxAPIConnection.
      */
-    public static BoxDeveloperEditionApiConnection getAppUserConnection(
+    public static BoxPlatformApiConnection getAppUserConnection(
                       String userId,
                       String clientId,
                       String clientSecret,
                       BoxJwtEncryptionPreferences encryptionPref) {
-        BoxDeveloperEditionApiConnection connection = new BoxDeveloperEditionApiConnection(
+        BoxPlatformApiConnection connection = new BoxPlatformApiConnection(
             userId,
-            BoxDeveloperEdition.DeveloperEditionEntityType.USER,
+            BoxPlatform.PlatformEntityType.USER,
             clientId,
             clientSecret,
             encryptionPref);
@@ -120,15 +120,15 @@ public class BoxDeveloperEditionApiConnection extends BoxApiConnection {
     }
 
     /**
-     * Disabling the non-Box Developer Edition authenticate method.
+     * Disabling the non-Box Platform Edition authenticate method.
      * @param authCode an auth code obtained from the first half of the OAuth process.
      */
     public override void authenticate(String authCode) {
-        throw new BoxApiConnectionException('BoxDeveloperEditionApiConnection does not allow authenticating with an auth code.');
+        throw new BoxApiConnectionException('BoxPlatformApiConnection does not allow authenticating with an auth code.');
     }
 
     /**
-     * Authenticates the API connection for Box Developer Edition.
+     * Authenticates the API connection for Box Platform Edition.
      */
     public void authenticate() {
         String jwtAssertion = this.constructJwtAssertion();
@@ -147,12 +147,12 @@ public class BoxDeveloperEditionApiConnection extends BoxApiConnection {
             this.setLastRefresh(DateTime.now().getTime());
             this.setExpires(Long.valueOf(authResponse.getValue('expires_in')) * 1000);
         } else {
-            throw new BoxApiConnectionException('BoxDeveloperEditionApiConnection unable to authenticate to generate tokens');
+            throw new BoxApiConnectionException('BoxPlatformApiConnection unable to authenticate to generate tokens');
         }
     }
 
     /**
-     * BoxDeveloperEditionAPIConnection can always refresh, but this method is required elsewhere.
+     * BoxPlatformApiConnection can always refresh, but this method is required elsewhere.
      * @return true always.
      */
     public override Boolean canRefresh() {
@@ -160,7 +160,7 @@ public class BoxDeveloperEditionApiConnection extends BoxApiConnection {
     }
 
     /**
-     * Refresh's this connection's access token using Box Developer Edition.
+     * Refresh's this connection's access token using Box Platform Edition.
      */
     public override void refresh() {
         this.authenticate();
@@ -194,7 +194,7 @@ public class BoxDeveloperEditionApiConnection extends BoxApiConnection {
         BoxGenericJsonObject claimsObject = new BoxGenericJsonObject();
         claimsObject.addValue('iss', this.getClientId());
         claimsObject.addValue('sub', this.entityId);
-        claimsObject.addValue('box_sub_type', BoxDeveloperEdition.getDeveloperEditionEntityTypeAsString(this.entityType));
+        claimsObject.addValue('box_sub_type', BoxPlatform.getPlatformEntityTypeAsString(this.entityType));
         claimsObject.addValue('aud', JWT_AUDIENCE);
         claimsObject.addValue('jti', this.createJti());
         //Token will be good for the next 10 seconds

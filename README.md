@@ -1,6 +1,3 @@
-This project is still under development
-=======================================
-
 Box Apex SDK
 ============
 
@@ -16,6 +13,10 @@ The SDK can be deployed directly to Sandbox or Developer Orgs by clicking
 </a>
 
 Alternatively, it can be obtained by cloning the source locally and then using your IDE or deployment tool of choice. 
+
+Running Tests
+-------------
+Tests are always run when deploying code to a production salesforce organization.  To manually run tests from a sandbox or developer org, go to Setup -> Develop -> Apex Classes and click the "Run All Tests" button.
 
 
 Copyright and License

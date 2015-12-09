@@ -1,5 +1,6 @@
 @isTest
-public class BoxDeveloperEditionApiConnectionTests {
+public class BoxPlatformApiConnectionTests {
+
 	private static String accessToken = 'accesstoken';
     private static String refreshToken = 'refreshtoken';
     private static String clientId = 'clientid';
@@ -23,11 +24,11 @@ public class BoxDeveloperEditionApiConnectionTests {
 	}
 	
 	public static testmethod void testValidConstructors() {
-		BoxDeveloperEdition.DeveloperEditionEntityType entityType = BoxDeveloperEdition.DeveloperEditionEntityType.USER;
+		BoxPlatform.PlatformEntityType entityType = BoxPlatform.PlatformEntityType.USER;
 		BoxJwtEncryptionPreferences encryptionPref = constructEncryptionPrefs();
 		
 		Test.startTest();
-		BoxDeveloperEditionApiConnection api = new BoxDeveloperEditionApiConnection(entityId, entityType, clientId, clientSecret, encryptionPref);
+		BoxPlatformApiConnection api = new BoxPlatformApiConnection(entityId, entityType, clientId, clientSecret, encryptionPref);
 		Test.stopTest();
 		
 		System.assertEquals(entityId, api.entityId);
@@ -36,28 +37,28 @@ public class BoxDeveloperEditionApiConnectionTests {
 	public static testmethod void testInvalidConstructors() {
 		Test.startTest();
 		try {
-			BoxDeveloperEditionApiConnection api = new BoxDeveloperEditionApiConnection(accessToken);
+			BoxPlatformApiConnection api = new BoxPlatformApiConnection(accessToken);
 			System.assert(false, 'BoxApiConnection.BoxApiConnectionException expected for invalid constructor call.');
 		} catch (BoxApiConnection.BoxApiConnectionException e) {
 			System.assert(e.getMessage().contains('This constructor is not available'), 'Exception message unexpected: ' + e.getMessage());
 		}
 		
 		try {
-			BoxDeveloperEditionApiConnection api = new BoxDeveloperEditionApiConnection(clientId, clientSecret);
+			BoxPlatformApiConnection api = new BoxPlatformApiConnection(clientId, clientSecret);
 			System.assert(false, 'BoxApiConnection.BoxApiConnectionException expected for invalid constructor call.');
 		} catch (BoxApiConnection.BoxApiConnectionException e) {
 			System.assert(e.getMessage().contains('This constructor is not available'), 'Exception message unexpected: ' + e.getMessage());
 		}
 		
 		try {
-			BoxDeveloperEditionApiConnection api = new BoxDeveloperEditionApiConnection(clientId, clientSecret, authCode);
+			BoxPlatformApiConnection api = new BoxPlatformApiConnection(clientId, clientSecret, authCode);
 			System.assert(false, 'BoxApiConnection.BoxApiConnectionException expected for invalid constructor call.');
 		} catch (BoxApiConnection.BoxApiConnectionException e) {
 			System.assert(e.getMessage().contains('This constructor is not available'), 'Exception message unexpected: ' + e.getMessage());
 		}
 		
 		try {
-			BoxDeveloperEditionApiConnection api = new BoxDeveloperEditionApiConnection(clientId, clientSecret, accessToken, refreshToken);
+			BoxPlatformApiConnection api = new BoxPlatformApiConnection(clientId, clientSecret, accessToken, refreshToken);
 			System.assert(false, 'BoxApiConnection.BoxApiConnectionException expected for invalid constructor call.');
 		} catch (BoxApiConnection.BoxApiConnectionException e) {
 			System.assert(e.getMessage().contains('This constructor is not available'), 'Exception message unexpected: ' + e.getMessage());
@@ -66,13 +67,13 @@ public class BoxDeveloperEditionApiConnectionTests {
 	}
 	
 	public static testmethod void testAuthenticate() {
-		BoxDeveloperEdition.DeveloperEditionEntityType entityType = BoxDeveloperEdition.DeveloperEditionEntityType.USER;
+		BoxPlatform.PlatformEntityType entityType = BoxPlatform.PlatformEntityType.USER;
 		BoxJwtEncryptionPreferences encryptionPref = constructEncryptionPrefs();
 		String authResponse = BoxTestJsonResponseFactory.AUTH_APP_USER_TOKEN;
 		Test.setMock(HttpCalloutMock.class, (new BoxTestMockCallout(authResponse, 'OK', 200)));
 		
 		Test.startTest();
-		BoxDeveloperEditionApiConnection api = new BoxDeveloperEditionApiConnection(entityId, entityType, clientId, clientSecret, encryptionPref);
+		BoxPlatformApiConnection api = new BoxPlatformApiConnection(entityId, entityType, clientId, clientSecret, encryptionPref);
 		api.authenticate();
 		Test.stopTest();
 		
@@ -80,11 +81,11 @@ public class BoxDeveloperEditionApiConnectionTests {
 	}
 	
 	public static testmethod void testInvalidAuthenticate() {
-		BoxDeveloperEdition.DeveloperEditionEntityType entityType = BoxDeveloperEdition.DeveloperEditionEntityType.USER;
+		BoxPlatform.PlatformEntityType entityType = BoxPlatform.PlatformEntityType.USER;
 		BoxJwtEncryptionPreferences encryptionPref = constructEncryptionPrefs();
 		
 		Test.startTest();
-		BoxDeveloperEditionApiConnection api = new BoxDeveloperEditionApiConnection(entityId, entityType, clientId, clientSecret, encryptionPref);
+		BoxPlatformApiConnection api = new BoxPlatformApiConnection(entityId, entityType, clientId, clientSecret, encryptionPref);
 		try {
 			api.authenticate(authCode);
 			System.assert(false, 'BoxApiConnection.BoxApiConnectionException expected for invalid authenticate call.');
@@ -95,13 +96,13 @@ public class BoxDeveloperEditionApiConnectionTests {
 	}
 	
 	public static testmethod void testRefresh() {
-		BoxDeveloperEdition.DeveloperEditionEntityType entityType = BoxDeveloperEdition.DeveloperEditionEntityType.USER;
+		BoxPlatform.PlatformEntityType entityType = BoxPlatform.PlatformEntityType.USER;
 		BoxJwtEncryptionPreferences encryptionPref = constructEncryptionPrefs();
 		String authResponse = BoxTestJsonResponseFactory.AUTH_APP_USER_TOKEN;
 		Test.setMock(HttpCalloutMock.class, (new BoxTestMockCallout(authResponse, 'OK', 200)));
 		
 		Test.startTest();
-		BoxDeveloperEditionApiConnection api = new BoxDeveloperEditionApiConnection(entityId, entityType, clientId, clientSecret, encryptionPref);
+		BoxPlatformApiConnection api = new BoxPlatformApiConnection(entityId, entityType, clientId, clientSecret, encryptionPref);
 		System.assertEquals(true, api.canRefresh());
 		api.refresh();
 		Test.stopTest();
@@ -115,8 +116,8 @@ public class BoxDeveloperEditionApiConnectionTests {
 		Test.setMock(HttpCalloutMock.class, (new BoxTestMockCallout(authResponse, 'OK', 200)));
 		
 		Test.startTest();
-		BoxDeveloperEditionApiConnection entApi = BoxDeveloperEditionApiConnection.getAppEnterpriseConnection(enterpriseId, clientId, clientSecret, encryptionPref);
-		BoxDeveloperEditionApiConnection userApi = BoxDeveloperEditionApiConnection.getAppUserConnection(userId, clientId, clientSecret, encryptionPref);
+		BoxPlatformApiConnection entApi = BoxPlatformApiConnection.getAppEnterpriseConnection(enterpriseId, clientId, clientSecret, encryptionPref);
+		BoxPlatformApiConnection userApi = BoxPlatformApiConnection.getAppUserConnection(userId, clientId, clientSecret, encryptionPref);
 		Test.stopTest();
 		
 		System.assertEquals(enterpriseId, entApi.entityId);
