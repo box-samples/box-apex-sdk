@@ -1,7 +1,7 @@
-Box Apex SDK
-============
+Box SDK for Salesforce
+======================
 
-The Box Apex SDK for interacting with the 
+This is the Box SDK for Salesforce for interacting with the 
 [Box Content API](https://box-content.readme.io/).
 
 Quickstart
@@ -11,12 +11,16 @@ The SDK can be deployed directly to Sandbox or Developer Orgs by clicking
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/src/main/webapp/resources/img/deploy.png">
 </a>
+"Deploy to Salesforce" functionality is not owned or operated by Box.
 
-Alternatively, it can be obtained by cloning the source locally and then using your IDE or deployment tool of choice. 
+The SDK is also distributed as an umanaged package.  Unmanaged packages can't be upgraded once installed in a Salesforce org so future upgrades will have to be applied by cloning the repo locally and updating classes from your IDE.
+* [Production/Developer Package Link][package-production]
+* [Sandbox Package Link][package-sandbox]
+Unmanaged packages can't be upgraded once installed in a Salesforce org so future upgrades will have to be applied by cloning the repo locally and updating classes from your IDE.
 
 Running Tests
 -------------
-Tests are always run when deploying code to a production salesforce organization.  To manually run tests from a sandbox or developer org, go to Setup -> Develop -> Apex Classes and click the "Run All Tests" button.
+Tests are always executed when deploying code to a production salesforce org.  To manually run tests from a sandbox or developer org, go to Setup -> Develop -> Apex Classes and click the "Run All Tests" button.
 
 
 Copyright and License
@@ -35,3 +39,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+[package-production]:https://cloud.box.com/Box-Apex-SDK
+[package-sandbox]:https://cloud.box.com/Box-Apex-SDK-Sandbox
